@@ -1,66 +1,41 @@
-## Foundry
++ 初始化项目 `forge init LlamaPay`
++ 配置环境变量 `source .env`
++ 部署合约 `forge script script/LlamaPay.s.sol:LlamaPayScript --rpc-url $BSC_TEST_RPC_URL --etherscan-api-key $BSCSCAN_API_KEY --broadcast --verify -vvvv`
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```
+MyToken@0xF4cE13c5b3Cb1dB0855277991895CCC4cA349583
+LlamaPay=0xa3E74D05798E3fED4A7127F8E8B7A0ae1E0cA2E8
+MyAccount=0xf2D55aC64536c3E626ADDfb121c7056a7b440901
+```
++ 查询账户余额
+```
+source .env
+export MyToken=0xF4cE13c5b3Cb1dB0855277991895CCC4cA349583
+export MyAccount=0xf2D55aC64536c3E626ADDfb121c7056a7b440901
+cast call $MyToken "balanceOf(address)(uint256)" $MyAccount --rpc-url $BSC_TEST_RPC_URL
 ```
 
-### Test
 
-```shell
-$ forge test
++ 授权代币 approve, Hash:`0x003f23336af5cb6bb5f044d36fb9d9098d9abbbd8936e3e74245e3063bd3e061`
+`cast send --private-key $PRIVATE_KEY 0xF4cE13c5b3Cb1dB0855277991895CCC4cA349583 "approve(address,uint256)" 0xa3E74D05798E3fED4A7127F8E8B7A0ae1E0cA2E8 100000000000000000000 --rpc-url $BSC_TEST_RPC_URL --gas-limit 21644000`
+
+
++ 存入资金 deposit, Hash: `0x0e1281eb383d4cdb67a8d5a2dc55b4faed32a751786718ffedf059fdfa6c61eb`
+```
+cast send --private-key $PRIVATE_KEY $LlamaPay "deposit(uint256)" 100000000000000000000 --rpc-url $BSC_TEST_RPC_URL --gas-limit 21644000
+
+cast call $MyToken "balanceOf(address)(uint256)" $LlamaPay --rpc-url $BSC_TEST_RPC_URL
 ```
 
-### Format
-
-```shell
-$ forge fmt
++ 创建支付流 createStream
 ```
+export alice=0x52fe15Ab6fCcf6289078221Aaffe3d6182C38677
+cast send --private-key $PRIVATE_KEY $LlamaPay "createStream(address,uint216)" $alice 300000000000000000 --rpc-url $BSC_TEST_RPC_URL --gas-limit 21644000
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+cast call $LlamaPay "getPayerBalance(address)" $MyAccount --rpc-url $BSC_TEST_RPC_URL
 ```
-
-### Anvil
-
-```shell
-$ anvil
++ 取款 withdraw
 ```
+cast send --private-key $PRIVATE_KEY $LlamaPay "withdraw(address,address,uint216)" $MyAccount $alice 300000000000000000 --rpc-url $BSC_TEST_RPC_URL --gas-limit 21644000
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
 ```
