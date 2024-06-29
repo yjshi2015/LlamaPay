@@ -14,7 +14,8 @@ contract LlamaPayScript is Script {
         vm.startBroadcast(deployer);
         
         MyToken myToken = new MyToken();
-        LlamaPay llamaPay = new LlamaPay(myToken.address);
+        console.log("myToken: " + myToken);
+        // LlamaPay llamaPay = new LlamaPay(myToken.address);
 
         vm.stopBroadcast();
     }
